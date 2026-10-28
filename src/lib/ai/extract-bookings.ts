@@ -10,7 +10,7 @@ const Milestone = z.object({
 });
 
 export const ExtractedBooking = z.object({
-  supplierName: z.string(),
+  supplierName: z.string().describe("The business name only, without booking numbers, e.g. \"Atlas Desert Tours\""),
   category: z.enum(["flight", "lodging", "activity", "transport", "other"]),
   currency: z.string().describe("ISO 4217 code, e.g. EUR"),
   total: z.number(),
