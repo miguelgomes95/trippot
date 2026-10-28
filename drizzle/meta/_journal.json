@@ -8,6 +8,13 @@
       "when": 1793185442178,
       "tag": "0000_next_deadpool",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793186748065,
+      "tag": "0001_ambiguous_king_bedlam",
+      "breakpoints": true
     }
   ]
 }

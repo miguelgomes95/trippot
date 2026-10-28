@@ -13,7 +13,8 @@
     "validate:paypal": "node --env-file=.env scripts/validate-sandbox.mjs",
     "typecheck": "next typegen && tsc --noEmit",
     "smoke:pot": "tsx --env-file=.env --conditions=react-server scripts/smoke-pot.mts",
-    "try:extract": "tsx --env-file=.env --conditions=react-server scripts/try-extract.mts"
+    "try:extract": "tsx --env-file=.env --conditions=react-server scripts/try-extract.mts",
+    "seed:demo": "tsx --env-file=.env --conditions=react-server scripts/seed-demo.mts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "1.3.0",

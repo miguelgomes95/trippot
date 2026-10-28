@@ -77,6 +77,8 @@ export const bookings = pgTable("bookings", {
   startsOn: date("starts_on"),
   endsOn: date("ends_on"),
   cancellationPolicy: text("cancellation_policy"),
+  // Who-pays-what hints from the confirmation, e.g. "9 participants", "single room +90 EUR".
+  notes: text("notes").array().notNull().default([]),
   sourceText: text("source_text"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

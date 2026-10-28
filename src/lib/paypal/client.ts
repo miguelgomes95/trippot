@@ -58,7 +58,11 @@ export async function paypal<T = unknown>(
   const text = await res.text();
   const data = text ? JSON.parse(text) : {};
   if (!res.ok) {
-    const detail = data.details?.map((d: { issue?: string; description?: string }) => d.description ?? d.issue).join("; ");
+    const detail = data.details
+      ?.map((d: { field?: string; issue?: string; description?: string }) =>
+        [d.field, d.description ?? d.issue].filter(Boolean).join(": "),
+      )
+      .join("; ");
     throw new PayPalError(res.status, data.name ?? "request_failed", detail ?? data.message, data.debug_id);
   }
   return data as T;
