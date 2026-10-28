@@ -5,9 +5,11 @@ import { AgentChat } from "@/components/agent-chat";
 import { AutoRefresh } from "@/components/auto-refresh";
 import { ApproveButton, SimulatePaymentButton } from "@/components/demo-buttons";
 import { PotJar } from "@/components/pot-jar";
+import { TripTimelineLoader } from "@/components/trip-timeline-loader";
 import { dateRange, day } from "@/lib/format";
 import { formatMoney } from "@/lib/money";
 import { tripDashboard, tripSetup, type TripDashboard } from "@/lib/queries";
+import { timelineData } from "@/lib/timeline";
 import { Setup } from "./setup";
 
 export default function TripPage({ params }: PageProps<"/trips/[id]">) {
@@ -33,6 +35,7 @@ async function Dashboard({ params }: { params: Promise<{ id: string }> }) {
       <AutoRefresh />
       <main className="mx-auto w-full max-w-4xl space-y-14 px-5 py-10 sm:px-10">
         <Header data={data} />
+        <Timeline data={data} />
         <Deadlines data={data} />
         <Travellers data={data} />
         <Activity data={data} />
@@ -95,6 +98,45 @@ function Header({ data }: { data: TripDashboard }) {
   );
 }
 
+const LEGEND = [
+  ["Paid", "bg-teal"],
+  ["Part paid or ready to pay", "bg-saffron"],
+  ["Not paid yet", "bg-ink"],
+  ["Late", "bg-brick"],
+  ["Needs your approval", "bg-violet"],
+  ["Supplier deadline, still collecting", "bg-[#8a93a3]"],
+] as const;
+
+function Timeline({ data }: { data: TripDashboard }) {
+  return (
+    <section aria-labelledby="timeline">
+      <h2 id="timeline" className="font-display text-2xl font-semibold">
+        Timeline
+      </h2>
+      <p className="mb-4 text-sm text-muted">
+        When money comes in from each traveller and goes out to each supplier. Hover over a payment for details.
+      </p>
+      <TripTimelineLoader data={timelineData(data)} />
+      <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted" aria-label="Legend">
+        {LEGEND.map(([label, className]) => (
+          <li key={label} className="flex items-center gap-1.5">
+            <span className={`h-2.5 w-2.5 rotate-45 ${className}`} aria-hidden />
+            {label}
+          </li>
+        ))}
+        <li className="flex items-center gap-1.5">
+          <span className="h-3 w-0.5 bg-violet" aria-hidden />
+          Today
+        </li>
+        <li className="flex items-center gap-1.5">
+          <span className="h-3 w-3 bg-saffron-soft" aria-hidden />
+          The trip
+        </li>
+      </ul>
+    </section>
+  );
+}
+
 const MILESTONE: Record<string, { text: string; className: string }> = {
   pending: { text: "Collecting", className: "bg-paper text-muted" },
   funded: { text: "Ready to pay", className: "bg-saffron-soft text-ink" },
@@ -127,6 +169,9 @@ function Deadlines({ data }: { data: TripDashboard }) {
                 <span className="num">{money(d.amountCents, trip.currency)}</span>
                 {d.status === "awaiting_approval" ? (
                   <ApproveButton tripId={trip.id} milestoneId={d.id} />
+                ) : d.status === "funded" ? (
+                  // Funded but unpaid means the agent hasn't paid it yet, or PayPal refused the payout.
+                  <ApproveButton tripId={trip.id} milestoneId={d.id} label="Pay now" />
                 ) : (
                   <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${s.className}`}>{s.text}</span>
                 )}

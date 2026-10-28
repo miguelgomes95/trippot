@@ -17,7 +17,7 @@ export function SimulatePaymentButton({ tripId, instalmentId }: { tripId: string
   );
 }
 
-export function ApproveButton({ tripId, milestoneId }: { tripId: string; milestoneId: string }) {
+export function ApproveButton({ tripId, milestoneId, label = "Approve and pay" }: { tripId: string; milestoneId: string; label?: string }) {
   const [pending, start] = useTransition();
   return (
     <button
@@ -25,7 +25,7 @@ export function ApproveButton({ tripId, milestoneId }: { tripId: string; milesto
       disabled={pending}
       className="rounded-md bg-violet px-2.5 py-1 text-xs font-medium text-white disabled:opacity-50"
     >
-      {pending ? "Paying…" : "Approve and pay"}
+      {pending ? "Paying…" : label}
     </button>
   );
 }

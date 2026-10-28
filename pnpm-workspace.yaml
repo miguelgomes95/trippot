@@ -1,4 +1,9 @@
 allowBuilds:
+  # Obfuscated postinstall that only stamps a random trial id into the library; not needed to run.
+  '@bryntum/scheduler-trial': false
+  '@bryntum/scheduler-trial-lib': false
+  # tsx and drizzle-kit already work with the platform binary package.
+  esbuild: false
   sharp: false
   unrs-resolver: false
 minimumReleaseAgeExclude:

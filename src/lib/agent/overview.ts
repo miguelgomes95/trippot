@@ -55,6 +55,7 @@ export async function tripOverview(tripId: string) {
     }),
     supplierDeadlines: deadlines.map(({ milestone, supplierName }) => ({
       id: milestone.id,
+      bookingId: milestone.bookingId,
       supplier: supplierName,
       label: milestone.label,
       amountCents: milestone.amountCents,

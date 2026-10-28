@@ -29,7 +29,7 @@ export const DEMO_CONFIRMATIONS = `From: reservations@riad-dar-zitoun.example
 Subject: Booking confirmed — Riad Dar Zitoun, 14–18 May 2027
 
 Dear Miguel,
-Thank you for booking the whole riad (6 double rooms and 1 single room, 12 guests) for 4 nights, 14 May to 18 May 2027.
+Thank you for booking the whole riad (4 double rooms, 1 triple room and 1 single room, 12 guests) for 4 nights, 14 May to 18 May 2027.
 Total: 2,880.00 EUR (breakfast included). The single room is +90 EUR, included in the total.
 Payment schedule: 30% deposit due by 1 March 2027, remaining balance due 15 April 2027.
 Payments via PayPal to payments@riad-dar-zitoun.example.

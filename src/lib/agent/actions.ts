@@ -78,13 +78,23 @@ export async function payMilestone(tripId: string, milestoneId: string, reason: 
     );
   }
 
-  const payout = await paySupplier({
-    milestoneId,
-    supplierEmail: booking.supplierPaypalEmail,
-    amountCents: milestone.amountCents,
-    currency: trip.currency,
-    note: `${trip.name}: ${milestone.label}`,
-  });
+  let payout: Awaited<ReturnType<typeof paySupplier>>;
+  try {
+    payout = await paySupplier({
+      milestoneId,
+      supplierEmail: booking.supplierPaypalEmail,
+      amountCents: milestone.amountCents,
+      currency: trip.currency,
+      note: `${trip.name}: ${milestone.label}`,
+    });
+  } catch (err) {
+    // The status stays as it was, so the money remains set aside for this supplier and the payout can be retried.
+    const why = `PayPal refused the payout: ${(err as Error).message}`;
+    await logAction(tripId, "payout_failed", `Could not pay ${booking.supplierName} (${milestone.label})`, why, {
+      milestoneId,
+    });
+    return { ok: false, error: why };
+  }
   await db
     .update(supplierMilestones)
     .set({ status: "paid", paidAt: new Date(), payoutBatchId: payout.batchId })
