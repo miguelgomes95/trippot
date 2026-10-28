@@ -101,6 +101,7 @@ export async function sendInvoices(tripId: string) {
           const { invoiceId, payerUrl } = await createAndSendInvoice({
             instalmentId: instalment.id,
             tripName: trip.name,
+            organizerName: trip.organizerName,
             label: instalment.label,
             travellerName: traveller.name,
             travellerEmail: traveller.email,

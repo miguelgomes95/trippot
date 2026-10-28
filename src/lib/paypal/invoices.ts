@@ -13,6 +13,7 @@ type Invoice = {
 export async function createAndSendInvoice(args: {
   instalmentId: string;
   tripName: string;
+  organizerName: string;
   label: string;
   travellerName: string;
   travellerEmail: string;
@@ -33,6 +34,8 @@ export async function createAndSendInvoice(args: {
         memo: `TripPot instalment ${args.instalmentId}`,
         payment_term: { due_date: args.dueDate },
       },
+      // Shown as the sender on the invoice instead of the merchant account's name.
+      invoicer: { business_name: `${args.organizerName} · ${args.tripName}` },
       primary_recipients: [
         {
           billing_info: {
