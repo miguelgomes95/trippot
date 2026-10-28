@@ -17,7 +17,13 @@ How to act:
 - When the organizer asks you to do something, do it, then confirm briefly what you did. Keep answers short.`;
 
 /** Runs the agent for one organizer request on one trip. Tools are bound to that trip. */
-export async function runAgent(tripId: string, request: string, history: Anthropic.Beta.BetaMessageParam[] = []) {
+export async function runAgent(
+  tripId: string,
+  request: string,
+  history: Anthropic.Beta.BetaMessageParam[] = [],
+  // What the audit log shows as the trigger; defaults to the request itself.
+  logAs = request,
+) {
   const tools = [
     betaZodTool({
       name: "get_trip_overview",
@@ -67,6 +73,6 @@ export async function runAgent(tripId: string, request: string, history: Anthrop
     .map((b) => b.text)
     .join("\n")
     .trim();
-  await logAction(tripId, "answer", answer.slice(0, 280) || "(no answer)", request);
+  await logAction(tripId, "answer", answer.slice(0, 280) || "(no answer)", logAs);
   return { answer, stopReason: final.stop_reason };
 }

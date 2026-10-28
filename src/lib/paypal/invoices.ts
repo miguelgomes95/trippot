@@ -7,7 +7,10 @@ type Invoice = {
   status: string;
   detail: { metadata?: { recipient_view_url?: string } };
   due_amount?: { value: string };
-  payments?: { paid_amount?: { value: string } };
+  payments?: {
+    paid_amount?: { value: string };
+    transactions?: { payment_id?: string; payment_date_time?: string; amount?: { value: string } }[];
+  };
 };
 
 export async function createAndSendInvoice(args: {
