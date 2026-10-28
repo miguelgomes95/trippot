@@ -1,0 +1,42 @@
+# Render Blueprint: the web app and its Postgres database.
+# Secrets are marked `sync: false`: Render asks for them when the Blueprint is first applied.
+services:
+  - type: web
+    name: trippot
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
+    # Migrations are idempotent, so running them on every start is safe (pre-deploy commands need a paid plan).
+    startCommand: pnpm db:migrate && pnpm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: trippot-db
+          property: connectionString
+      - key: PAYPAL_ENV
+        value: sandbox
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      # From developer.paypal.com → your app → Webhooks, after adding
+      # https://<your-service>.onrender.com/api/webhooks/paypal
+      - key: PAYPAL_WEBHOOK_ID
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: AGENT_MODEL
+        value: claude-opus-5-5
+      - key: EXTRACTION_MODEL
+        value: claude-haiku-5-5
+
+databases:
+  - name: trippot-db
+    plan: free
+    region: frankfurt
+    databaseName: trippot
+    user: trippot

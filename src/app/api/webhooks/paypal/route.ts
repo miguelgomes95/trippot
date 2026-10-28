@@ -20,7 +20,8 @@ type PayPalEvent = {
 const skipVerify = process.env.NODE_ENV !== "production" && process.env.PAYPAL_WEBHOOK_SKIP_VERIFY === "true";
 
 export async function POST(request: Request) {
-  const event = (await request.json()) as PayPalEvent;
+  const event = (await request.json().catch(() => null)) as PayPalEvent | null;
+  if (!event?.id || !event.event_type) return Response.json({ error: "not a PayPal event" }, { status: 400 });
   if (!skipVerify && !(await verifyWebhook(request.headers, event)))
     return Response.json({ error: "invalid signature" }, { status: 401 });
 
