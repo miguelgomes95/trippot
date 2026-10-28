@@ -2,7 +2,7 @@ import "server-only";
 import type Anthropic from "@anthropic-ai/sdk";
 import { betaZodTool } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { z } from "zod";
-import { claude, FALLBACK, MODEL } from "../ai/claude";
+import { AGENT_MODEL, claude, FALLBACK } from "../ai/claude";
 import { logAction, payMilestone, remindTraveller } from "./actions";
 import { tripOverview } from "./overview";
 
@@ -52,7 +52,7 @@ export async function runAgent(tripId: string, request: string, history: Anthrop
   ];
 
   const final = await claude.beta.messages.toolRunner({
-    model: MODEL,
+    model: AGENT_MODEL,
     max_tokens: 16000,
     ...FALLBACK,
     output_config: { effort: "medium" },

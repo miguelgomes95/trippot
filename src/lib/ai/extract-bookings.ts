@@ -1,7 +1,7 @@
 import "server-only";
 import { z } from "zod";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
-import { claude, FALLBACK, MODEL } from "./claude";
+import { claude, EXTRACTION_MODEL } from "./claude";
 
 const Milestone = z.object({
   label: z.string().describe('e.g. "30% deposit", "Balance"'),
@@ -36,9 +36,8 @@ One confirmation can contain several bookings (e.g. outbound and return flights 
 
 export async function extractBookings(confirmationText: string, tripContext: string) {
   const response = await claude.beta.messages.parse({
-    model: MODEL,
+    model: EXTRACTION_MODEL,
     max_tokens: 16000,
-    ...FALLBACK,
     output_config: { effort: "medium", format: betaZodOutputFormat(Extraction) },
     system: SYSTEM,
     messages: [
