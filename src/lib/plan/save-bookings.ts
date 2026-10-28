@@ -64,7 +64,7 @@ export async function importConfirmations(tripId: string, text: string) {
     await logAction(
       tripId,
       "extract",
-      `Read ${b.supplierName}: ${formatMoney(booking.totalCents, trip.currency)} in ${milestones.length} payment(s)`,
+      `Read ${b.supplierName}: ${formatMoney(booking.totalCents, trip.currency)} in ${milestones.length} payment${milestones.length === 1 ? "" : "s"}`,
       undefined,
       { bookingId: booking.id },
     );

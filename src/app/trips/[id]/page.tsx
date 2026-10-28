@@ -5,8 +5,10 @@ import { AgentChat } from "@/components/agent-chat";
 import { AutoRefresh } from "@/components/auto-refresh";
 import { ApproveButton, SimulatePaymentButton } from "@/components/demo-buttons";
 import { PotJar } from "@/components/pot-jar";
+import { dateRange, day } from "@/lib/format";
 import { formatMoney } from "@/lib/money";
-import { tripDashboard, type TripDashboard } from "@/lib/queries";
+import { tripDashboard, tripSetup, type TripDashboard } from "@/lib/queries";
+import { Setup } from "./setup";
 
 export default function TripPage({ params }: PageProps<"/trips/[id]">) {
   return (
@@ -19,8 +21,11 @@ export default function TripPage({ params }: PageProps<"/trips/[id]">) {
 async function Dashboard({ params }: { params: Promise<{ id: string }> }) {
   await connection();
   const { id } = await params;
-  const data = await tripDashboard(id).catch(() => null);
-  if (!data) notFound();
+  // Postgres rejects ids that aren't UUIDs; treat those as not found too.
+  const setup = await tripSetup(id).catch(() => null);
+  if (!setup) notFound();
+  if (!setup.live) return <Setup data={setup} />;
+  const data = await tripDashboard(id);
   const { trip } = data;
 
   return (
@@ -40,16 +45,7 @@ async function Dashboard({ params }: { params: Promise<{ id: string }> }) {
 }
 
 const money = (cents: number, currency: string) => formatMoney(cents, currency);
-const day = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
-
-function range(dates: string) {
-  const [a, b] = dates.split(" → ").map((d) => new Date(`${d}T00:00:00Z`));
-  const opts = { timeZone: "UTC" } as const;
-  const end = b.toLocaleDateString("en-GB", { ...opts, day: "numeric", month: "long", year: "numeric" });
-  return a.getUTCMonth() === b.getUTCMonth()
-    ? `${a.getUTCDate()} to ${end}`
-    : `${a.toLocaleDateString("en-GB", { ...opts, day: "numeric", month: "long" })} to ${end}`;
-}
+const range = (dates: string) => dateRange(...(dates.split(" → ") as [string, string]));
 
 function Header({ data }: { data: TripDashboard }) {
   const { trip, pot, totalCents, supplierDeadlines, travellers } = data;

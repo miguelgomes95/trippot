@@ -4,9 +4,9 @@ import { useRef, useState, useTransition } from "react";
 import { askAgent, type ChatTurn } from "@/app/trips/[id]/actions";
 
 const SUGGESTIONS = [
-  "Who still owes money for the riad?",
+  "Who still owes money?",
   "Remind everyone who is late",
-  "Can we pay the transfers yet?",
+  "Which supplier do we pay next?",
 ];
 
 export function AgentChat({ tripId, tripName }: { tripId: string; tripName: string }) {

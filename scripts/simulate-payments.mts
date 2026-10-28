@@ -5,12 +5,13 @@
 import { randomUUID } from "node:crypto";
 import { asc, eq } from "drizzle-orm";
 import { db, tables } from "../src/db";
+import { DEMO_TRIP } from "../src/lib/demo-data";
 import { recordPayment } from "../src/lib/paypal/invoices";
 
 const { trips, travellers, instalments, agentActions } = tables;
 const APP = process.env.APP_URL ?? "http://localhost:3100";
 
-const [trip] = await db.select().from(trips).where(eq(trips.name, "Marrakech May 2027"));
+const [trip] = await db.select().from(trips).where(eq(trips.name, DEMO_TRIP.name));
 if (!trip) throw new Error("Run pnpm seed:demo --send first");
 
 const rows = await db
