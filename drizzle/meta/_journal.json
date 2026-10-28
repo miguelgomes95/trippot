@@ -15,6 +15,13 @@
       "when": 1793186748065,
       "tag": "0001_ambiguous_king_bedlam",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793195835679,
+      "tag": "0002_dapper_katie_power",
+      "breakpoints": true
     }
   ]
 }

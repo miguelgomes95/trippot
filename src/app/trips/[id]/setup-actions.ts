@@ -6,6 +6,7 @@ import { db, tables } from "@/db";
 import { buildInstalments, sendInvoices } from "@/lib/plan/instalments";
 import { importConfirmations } from "@/lib/plan/save-bookings";
 import { planSplit } from "@/lib/plan/split";
+import { takeAllowance, visitor, type LimitedAction } from "@/lib/rate-limit";
 import { isValidEmail } from "@/lib/validate";
 
 const { bookings, shares, travellers, instalments } = tables;
@@ -26,6 +27,12 @@ async function hasInstalments(tripId: string) {
   return Boolean(one);
 }
 
+/** Returns a failed result when the visitor is over the demo's limit for `action`. */
+async function overLimit(action: LimitedAction) {
+  const blocked = await takeAllowance(action, await visitor());
+  return blocked ? fail(blocked) : null;
+}
+
 const LOCKED = "Invoices are already planned for this trip, so its bookings can't change.";
 
 export async function importBookings(tripId: string, text: string): Promise<StepResult> {
@@ -33,6 +40,8 @@ export async function importBookings(tripId: string, text: string): Promise<Step
   if (!pasted) return fail("Paste at least one booking confirmation.");
   if (pasted.length > 20_000) return fail("That's too long. Paste up to about 10 confirmations at a time.");
   if (await hasInstalments(tripId)) return fail(LOCKED);
+  const limited = await overLimit("extract");
+  if (limited) return limited;
   try {
     const { saved, warnings } = await importConfirmations(tripId, pasted);
     refresh();
@@ -66,6 +75,8 @@ export async function removeBooking(tripId: string, bookingId: string): Promise<
 
 export async function planTripSplit(tripId: string): Promise<StepResult> {
   if (await hasInstalments(tripId)) return fail(LOCKED);
+  const limited = await overLimit("split");
+  if (limited) return limited;
   try {
     const { warnings } = await planSplit(tripId);
     refresh();
@@ -78,6 +89,8 @@ export async function planTripSplit(tripId: string): Promise<StepResult> {
 
 /** Plans the instalments (once) and sends every invoice that hasn't gone out yet. */
 export async function sendTripInvoices(tripId: string): Promise<StepResult> {
+  const limited = await overLimit("invoices");
+  if (limited) return limited;
   try {
     if (!(await hasInstalments(tripId))) {
       const tripBookings = await db.select({ id: bookings.id }).from(bookings).where(eq(bookings.tripId, tripId));

@@ -8,6 +8,7 @@ import { payMilestone } from "@/lib/agent/actions";
 import { onMilestonesChanged } from "@/lib/agent/autopilot";
 import { runAgent } from "@/lib/agent/run";
 import { recordPayment } from "@/lib/paypal/invoices";
+import { takeAllowance, visitor } from "@/lib/rate-limit";
 import { syncInvoice } from "@/lib/sync";
 
 const { instalments, travellers, trips } = tables;
@@ -17,13 +18,15 @@ export type ChatTurn = { role: "user" | "assistant"; text: string };
 export async function askAgent(tripId: string, question: string, history: ChatTurn[]) {
   const text = question.trim().slice(0, 1000);
   if (!text) return { answer: "" };
+  const blocked = await takeAllowance("agent", await visitor());
+  if (blocked) return { answer: "", error: blocked };
   const { answer } = await runAgent(
     tripId,
     text,
     history.slice(-8).map((t) => ({ role: t.role, content: t.text })),
   );
   refresh();
-  return { answer };
+  return { answer, error: null };
 }
 
 /**

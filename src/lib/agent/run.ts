@@ -63,7 +63,10 @@ export async function runAgent(
     max_tokens: 16000,
     ...FALLBACK,
     output_config: { effort: "medium" },
-    system: SYSTEM,
+    // The tools and system prompt are the same for every trip and every question, so they're cached.
+    // The rest isn't: most runs are two steps (read the overview, answer), so caching the ~4k-token
+    // overview would cost a cache write that's never read back.
+    system: [{ type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }],
     tools,
     max_iterations: 12,
     messages: [...history, { role: "user", content: request }],
@@ -74,6 +77,10 @@ export async function runAgent(
     .map((b) => b.text)
     .join("\n")
     .trim();
+  const u = final.usage;
+  console.info(
+    `[agent] ${final.model} in=${u.input_tokens} cache_read=${u.cache_read_input_tokens ?? 0} cache_write=${u.cache_creation_input_tokens ?? 0} out=${u.output_tokens}`,
+  );
   await logAction(tripId, "answer", answer.slice(0, 280) || "(no answer)", logAs);
   return { answer, stopReason: final.stop_reason };
 }

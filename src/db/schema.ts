@@ -1,6 +1,7 @@
 import {
   boolean,
   date,
+  index,
   integer,
   jsonb,
   pgEnum,
@@ -160,3 +161,16 @@ export const webhookEvents = pgTable("webhook_events", {
   payload: jsonb("payload").notNull(),
   receivedAt: timestamp("received_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// One row per use of something costly (an AI call, a batch of PayPal invoices), for the public demo's limits.
+export const usageEvents = pgTable(
+  "usage_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    action: text("action").notNull(),
+    // Who used it: the visitor's IP, or "system" for the agent's automatic runs.
+    client: text("client").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("usage_events_action_created_idx").on(t.action, t.createdAt)],
+);

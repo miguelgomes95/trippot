@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { db, tables } from "@/db";
+import { takeAllowance, visitor } from "@/lib/rate-limit";
 import { isValidEmail, parseTravellers } from "@/lib/validate";
 
 const { trips, travellers } = tables;
@@ -29,6 +30,8 @@ export async function createTrip(_prev: NewTripState, form: FormData): Promise<N
   const parsed = parseTravellers(values.travellers);
   errors.push(...parsed.errors);
   if (errors.length) return { values, errors };
+  const blocked = await takeAllowance("trip", await visitor());
+  if (blocked) return { values, errors: [blocked] };
 
   const tripId = await db.transaction(async (tx) => {
     const [trip] = await tx

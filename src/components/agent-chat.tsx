@@ -25,8 +25,12 @@ export function AgentChat({ tripId, tripName }: { tripId: string; tripName: stri
     setError(null);
     startTransition(async () => {
       try {
-        const { answer } = await askAgent(tripId, question, history);
-        setTurns((t) => [...t, { role: "assistant", text: answer || "Done." }]);
+        const { answer, error } = await askAgent(tripId, question, history);
+        if (error) {
+          setTurns(history);
+          setDraft(question);
+          setError(error);
+        } else setTurns((t) => [...t, { role: "assistant", text: answer || "Done." }]);
       } catch {
         setError("The agent couldn't answer. Check the server logs and try again.");
       }
