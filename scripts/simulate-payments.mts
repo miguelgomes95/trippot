@@ -1,6 +1,6 @@
-// Pays every traveller's earliest instalment in the PayPal sandbox and delivers the matching
-// webhook to the local app, like PayPal would. The last payment funds the riad deposit,
-// which should make the agent pay the riad on its own.
+// Pays every traveller's earliest unpaid instalment in the PayPal sandbox and delivers the matching
+// webhook to the local app, like PayPal would. Each run is one payment round: the first funds the
+// riad deposit, the second the April deadlines (the riad balance needs the organizer's approval).
 // Run (with `pnpm dev` running and PAYPAL_WEBHOOK_SKIP_VERIFY=true): pnpm simulate:payments
 import { randomUUID } from "node:crypto";
 import { asc, eq } from "drizzle-orm";
@@ -20,10 +20,12 @@ const rows = await db
   .where(eq(travellers.tripId, trip.id))
   .orderBy(asc(instalments.dueDate));
 const seen = new Set<string>();
-const earliest = rows.filter((r) => !seen.has(r.traveller.id) && seen.add(r.traveller.id));
+const earliest = rows
+  .filter((r) => r.instalment.status !== "paid" && r.instalment.status !== "cancelled")
+  .filter((r) => !seen.has(r.traveller.id) && seen.add(r.traveller.id));
 
 for (const { instalment, traveller } of earliest) {
-  if (!instalment.paypalInvoiceId || instalment.status === "paid") continue;
+  if (!instalment.paypalInvoiceId) continue;
   // Skips the payment if PayPal already has it (e.g. a re-run); the webhook then just syncs.
   await recordPayment(instalment.paypalInvoiceId, instalment.amountCents - instalment.paidCents, trip.currency).catch(
     (err) => console.log(`  (payment not recorded: ${err.message})`),

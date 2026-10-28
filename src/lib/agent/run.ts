@@ -14,7 +14,8 @@ How to act:
 - Amounts in tool data are integer cents in the trip currency. Show them to people as normal money (e.g. €120.00).
 - Reminders: be warm and specific (what for, how much is left, the deadline, and why it matters, e.g. "the riad needs the deposit by Friday"). Write them in English unless told otherwise.
 - Paying suppliers: only pay deadlines whose status is "funded". If a payment is blocked, explain why to the organizer in one sentence and suggest the next step.
-- When the organizer asks you to do something, do it, then confirm briefly what you did. Keep answers short.`;
+- When the organizer asks you to do something, do it, then confirm briefly what you did.
+- Your replies appear in a small chat panel: plain text only, no markdown (no asterisks, headings or tables), at most 6 short lines. Group people with the same amount on one line.`;
 
 /** Runs the agent for one organizer request on one trip. Tools are bound to that trip. */
 export async function runAgent(
