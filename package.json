@@ -23,7 +23,6 @@
     "@bryntum/scheduler-react": "7.3.7",
     "drizzle-orm": "0.45.4",
     "next": "16.4.3",
-    "openai": "7.45.1",
     "postgres": "^3.4.9",
     "react": "19.3.0",
     "react-dom": "19.3.0",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { askAgent, type ChatTurn } from "@/app/trips/[id]/actions";
 
 const SUGGESTIONS = [
@@ -15,6 +15,15 @@ export function AgentChat({ tripId, tripName }: { tripId: string; tripName: stri
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  // Until the page hydrates, sending would submit the form natively and reload the page.
+  const hydrated = useSyncExternalStore(noop, () => true, () => false);
+
+  // Keep anything typed into the box before the page hydrated.
+  useEffect(() => {
+    const typed = inputRef.current?.value;
+    if (typed) setDraft(typed);
+  }, []);
 
   function send(text: string) {
     const question = text.trim();
@@ -92,6 +101,7 @@ export function AgentChat({ tripId, tripName }: { tripId: string; tripName: stri
         <div className="flex gap-2">
           <input
             id="agent-input"
+            ref={inputRef}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             placeholder="Ask about payments or tell it what to do"
@@ -100,7 +110,7 @@ export function AgentChat({ tripId, tripName }: { tripId: string; tripName: stri
           />
           <button
             type="submit"
-            disabled={pending || !draft.trim()}
+            disabled={!hydrated || pending || !draft.trim()}
             className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-white disabled:opacity-40"
           >
             Send
@@ -110,3 +120,5 @@ export function AgentChat({ tripId, tripName }: { tripId: string; tripName: stri
     </section>
   );
 }
+
+const noop = () => () => {};
