@@ -60,7 +60,7 @@ On the live demo:
 3. When a supplier deadline is covered, the agent pays it on its own. The riad balance is above the autopay limit, so it waits for **Approve and pay**.
 4. Ask the agent something in the chat.
 
-To start from scratch, choose **Plan a trip** on the home page and then **Use the example trip**.
+To start from scratch, choose **Plan your own** on the home page and then **Use the example trip**. The home page lists only the trips created in your browser.
 
 The demo is public, so it limits each visitor to a set number of AI calls per hour, with a daily cap for everyone.
 

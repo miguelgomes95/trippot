@@ -77,3 +77,184 @@ body {
   color: var(--color-muted);
   font-variant-numeric: tabular-nums;
 }
+
+/*
+ * The hero's one orchestrated moment: the example trip replayed in about 9 seconds.
+ * Every element runs once with `both` fill, so with reduced motion (durations of 1ms,
+ * no delays) the story is shown in its final state.
+ */
+
+.story {
+  --fill-a: 0.1953; /* the riad deposit: €864 of €4,425 */
+}
+
+.story-coin {
+  animation: story-drop 650ms cubic-bezier(0.55, 0, 0.9, 0.45) both;
+}
+
+@keyframes story-drop {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(150px);
+    opacity: 0;
+  }
+}
+
+.story-fill {
+  transform-box: fill-box;
+  transform-origin: bottom;
+  animation: story-fill-up 9s linear both;
+}
+
+@keyframes story-fill-up {
+  0%,
+  8% {
+    transform: scaleY(0);
+  }
+  26% {
+    transform: scaleY(var(--fill-a));
+    animation-timing-function: linear;
+  }
+  42% {
+    transform: scaleY(var(--fill-a));
+    animation-timing-function: cubic-bezier(0.3, 0.6, 0.4, 1);
+  }
+  62%,
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+.story-appear {
+  animation: story-appear-in 450ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes story-appear-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The approval request: shows, waits, then gives way to the payment. */
+.story-ask {
+  animation: story-ask-in-out 1700ms ease both;
+}
+
+@keyframes story-ask-in-out {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  20%,
+  82% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The organizer pressing "Approve and pay". */
+.story-press {
+  animation: story-press-down 500ms ease both;
+}
+
+@keyframes story-press-down {
+  0%,
+  100% {
+    transform: none;
+  }
+  40% {
+    transform: scale(0.94);
+    background: var(--color-ink);
+  }
+}
+
+.story-band {
+  animation: story-band-in 500ms ease both;
+}
+
+@keyframes story-band-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* The group chat on the home page: messages arrive one by one once it's on screen. */
+.chat-in {
+  animation: story-appear-in 400ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* The architecture diagram lights up step by step. */
+.arch-node {
+  animation: arch-light 500ms ease both;
+}
+
+@keyframes arch-light {
+  from {
+    opacity: 0.25;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The agent's tool call, spinning until it returns. */
+.agent-spin {
+  animation: agent-spin 400ms linear 3 both;
+}
+
+@keyframes agent-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* An amount in the split table that just changed. */
+.split-flash {
+  animation: split-flash 900ms ease-out both;
+}
+
+@keyframes split-flash {
+  from {
+    background: var(--color-saffron-soft);
+  }
+  to {
+    background: transparent;
+  }
+}
+
+/* Held on the first frame until on screen. */
+.story:not(.story-playing) *,
+.reveal:not(.reveal-on) * {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story *,
+  .reveal *,
+  .split-flash {
+    animation-duration: 1ms !important;
+    animation-delay: 0s !important;
+  }
+}

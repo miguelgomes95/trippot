@@ -2,11 +2,33 @@ import "server-only";
 import { and, asc, desc, eq, inArray } from "drizzle-orm";
 import { db, tables } from "@/db";
 import { tripOverview } from "./agent/overview";
+import { DEMO_TRIP } from "./demo-data";
 
 const { trips, travellers, bookings, supplierMilestones, shares, instalments, agentActions } = tables;
 
-export async function listTrips() {
-  return db.select().from(trips).orderBy(desc(trips.createdAt));
+export async function tripsByIds(ids: string[]) {
+  if (!ids.length) return [];
+  return db.select().from(trips).where(inArray(trips.id, ids)).orderBy(desc(trips.createdAt));
+}
+
+/**
+ * The seeded example trip, with its live numbers for the home page. Visitors can
+ * create trips with the same name from the example form, so the oldest one wins.
+ */
+export async function exampleTrip() {
+  const [trip] = await db.select().from(trips).where(eq(trips.name, DEMO_TRIP.name)).orderBy(asc(trips.createdAt)).limit(1);
+  if (!trip) return null;
+  const overview = await tripOverview(trip.id);
+  return {
+    id: trip.id,
+    currency: trip.currency,
+    travellers: overview.travellers.length,
+    collectedCents: overview.pot.collectedCents,
+    owedCents: overview.travellers.reduce((s, t) => s + t.owedCents, 0),
+    suppliers: new Set(overview.supplierDeadlines.map((d) => d.bookingId)).size,
+    suppliersPaid: overview.supplierDeadlines.filter((d) => d.status === "paid").length,
+    supplierDeadlines: overview.supplierDeadlines.length,
+  };
 }
 
 /** Everything the trip dashboard shows, in one call. */

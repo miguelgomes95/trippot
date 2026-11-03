@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { db, tables } from "@/db";
+import { rememberTrip } from "@/lib/my-trips";
 import { takeAllowance, visitor } from "@/lib/rate-limit";
 import { isValidEmail, parseTravellers } from "@/lib/validate";
 
@@ -50,5 +51,6 @@ export async function createTrip(_prev: NewTripState, form: FormData): Promise<N
     await tx.insert(travellers).values(parsed.travellers.map((t) => ({ ...t, tripId: trip.id })));
     return trip.id;
   });
+  await rememberTrip(tripId);
   redirect(`/trips/${tripId}`);
 }
