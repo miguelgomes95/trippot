@@ -6,7 +6,7 @@ services:
     runtime: node
     plan: free
     region: frankfurt
-    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && TOKIO_WORKER_THREADS=4 pnpm build
     # Migrations are idempotent, so running them on every start is safe (pre-deploy commands need a paid plan).
     startCommand: pnpm db:migrate && pnpm start
     healthCheckPath: /
