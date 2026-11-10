@@ -4,7 +4,7 @@
 
 Built for the [PayPal AI Hackathon](https://paypalaihackathon.devpost.com/) (2026).
 
-- **Live demo:** https://trippot.onrender.com (PayPal sandbox; the free server can take up to a minute to wake up)
+- **Live demo:** https://trippot.onrender.com (PayPal sandbox)
 - **Video:** https://youtu.be/XZWa_kEoFl8
 
 ## The problem

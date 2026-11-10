@@ -4,7 +4,8 @@ services:
   - type: web
     name: trippot
     runtime: node
-    plan: free
+    # Paid during judging (1–15 Dec 2026), so the demo never has to wake up.
+    plan: 0.5c-512mb
     region: frankfurt
     # Production builds use webpack: Turbopack runs out of memory on Linux bundling the Bryntum trial package.
     buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
