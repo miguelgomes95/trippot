@@ -96,6 +96,12 @@ The sandbox business account pays suppliers from its own balance, and simulated 
 
 `render.yaml` describes the web service and its Postgres database for [Render](https://render.com/). Create a Blueprint from the repository and enter the secrets when asked. Then add a webhook in your PayPal app pointing to `https://<your-service>.onrender.com/api/webhooks/paypal` for the invoicing and payouts events, and set `PAYPAL_WEBHOOK_ID` to its id.
 
+Production builds use webpack (`next build --webpack`): Turbopack runs out of memory on Linux while bundling the Bryntum trial package. Development still uses Turbopack.
+
+## Keys and secrets
+
+No key is in this repository or its history. The PayPal and Anthropic keys live only in environment variables (`.env` locally, which git ignores, and Render's environment in production), and they are read only by server modules marked `server-only`, so they never reach the browser bundle. The demo runs against the PayPal sandbox, so no real money can move, and the Anthropic key has a monthly spending cap on top of the demo's rate limits.
+
 ## Code map
 
 ```
