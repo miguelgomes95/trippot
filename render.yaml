@@ -36,7 +36,8 @@ services:
 
 databases:
   - name: trippot-db
-    plan: free
+    # Paid: a free Render database expires 30 days after it is created.
+    plan: basic-256mb
     region: frankfurt
     databaseName: trippot
     user: trippot
