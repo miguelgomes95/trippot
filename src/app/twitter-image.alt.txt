@@ -1,0 +1,1 @@
+TripPot: stop being the bank for your group trip. An AI agent that collects with PayPal invoices and pays each supplier when the pot covers it.
