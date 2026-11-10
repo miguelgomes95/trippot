@@ -16,8 +16,7 @@ import { exampleTrip, tripsByIds } from "@/lib/queries";
 import dashboard from "../../public/landing/dashboard.png";
 
 const REPO_URL = "https://github.com/miguelgomes95/trippot";
-// The YouTube link, once the video is public.
-const VIDEO_URL: string | null = null;
+const VIDEO_URL = "https://youtu.be/XZWa_kEoFl8";
 
 const SOURCES = [
   {
@@ -333,11 +332,9 @@ export default function Home() {
               <a href={REPO_URL} className="underline decoration-line underline-offset-2 hover:text-ink" rel="noopener">
                 Source code on GitHub (MIT)
               </a>
-              {VIDEO_URL && (
-                <a href={VIDEO_URL} className="underline decoration-line underline-offset-2 hover:text-ink" rel="noopener">
-                  Demo video
-                </a>
-              )}
+              <a href={VIDEO_URL} className="underline decoration-line underline-offset-2 hover:text-ink" rel="noopener">
+                Demo video
+              </a>
             </p>
           </div>
           <div>
