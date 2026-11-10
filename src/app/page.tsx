@@ -15,6 +15,10 @@ import { myTripIds } from "@/lib/my-trips";
 import { exampleTrip, tripsByIds } from "@/lib/queries";
 import dashboard from "../../public/landing/dashboard.png";
 
+const REPO_URL = "https://github.com/miguelgomes95/trippot";
+// The YouTube link, once the video is public.
+const VIDEO_URL: string | null = null;
+
 const SOURCES = [
   {
     id: 1,
@@ -324,6 +328,16 @@ export default function Home() {
             <p className="mt-2 max-w-[28rem]">
               Built for the PayPal AI Hackathon 2026 with Claude, PayPal Invoicing, Payouts and Webhooks, and Bryntum
               Scheduler. No real money moves. The public demo limits how many AI calls each visitor can make per hour.
+            </p>
+            <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">
+              <a href={REPO_URL} className="underline decoration-line underline-offset-2 hover:text-ink" rel="noopener">
+                Source code on GitHub (MIT)
+              </a>
+              {VIDEO_URL && (
+                <a href={VIDEO_URL} className="underline decoration-line underline-offset-2 hover:text-ink" rel="noopener">
+                  Demo video
+                </a>
+              )}
             </p>
           </div>
           <div>
