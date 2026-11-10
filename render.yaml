@@ -6,7 +6,8 @@ services:
     runtime: node
     plan: free
     region: frankfurt
-    buildCommand: bash scripts/render-build.sh
+    # Production builds use webpack: Turbopack runs out of memory on Linux bundling the Bryntum trial package.
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
     # Migrations are idempotent, so running them on every start is safe (pre-deploy commands need a paid plan).
     startCommand: pnpm db:migrate && pnpm start
     healthCheckPath: /
